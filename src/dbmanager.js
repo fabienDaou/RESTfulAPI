@@ -102,6 +102,24 @@ this.initSchema = function() {
 
 }
 
+// Retrieve dude, dudes, all dudes
+// optional mode = {mode:'ALL'}
+// return a promise
+this.getDudes = function(arrayids, mode) {
+    if(mode && mode.mode === 'ALL'){
+        return this.seqConn.models.Dude.findAll({
+            attributes: ['DudeID', 'Fullname', 'Phone', 'Email']
+        });
+    }
+
+    return this.seqConn.models.Dude.findAll({
+        where: {
+            DudeID: arrayids
+        },
+        attributes: ['DudeID', 'Fullname', 'Phone', 'Email']
+    });
+}
+
 this.addDude = function(dude) {
     if(!dude.fullname){
         return 0;

@@ -10,6 +10,7 @@ DBmanager.initSchema();
 
 DBmanager.seqConn.sync().then(function() {
     console.log('Synced with sqlite DB.');
+    RESTServer.start(DBmanager);
 });
 
 
