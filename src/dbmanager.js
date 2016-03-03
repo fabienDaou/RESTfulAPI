@@ -1,5 +1,6 @@
 var Sequelize = require('sequelize'),
-    Sqlite = require('sqlite3').verbose();
+    Sqlite = require('sqlite3').verbose(),
+    Promise = require('promise');
 
 
 this.seqConn = null;
@@ -129,6 +130,20 @@ this.addDude = function(dude) {
         Phone: dude.phone,
         Email: dude.email
     });
+}
+
+this.deleteDude = function(arrayids) {
+    var promises = [];
+    for (var i = arrayids.length - 1; i >= 0; i--) {
+        var promise = this.seqConn.models.Dude
+            .destroy({ 
+                where: { 
+                    DudeID: arrayids[i] 
+                }
+            });
+        promises.push(promise);
+    }
+    return Promise.all(promises);
 }
 
 

@@ -51,6 +51,13 @@ this.defineInterface = function() {
                 console.log(data);
             });
     });
+
+    this.restapi.delete('/rest/dudes/:id', (req, res) => {
+        this.DBmanager.deleteDude([req.params.id])
+            .then(function() {
+                res.send({success:true});
+            });
+    });
 }
 
 
