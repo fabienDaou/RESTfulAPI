@@ -45,8 +45,8 @@ this.initSchema = function() {
         DudeID: {
             type: Sequelize.INTEGER,
             references: {
-                model: "Dude",
-                key: "DudeID"
+                model: 'Dude',
+                key: 'DudeID'
             }
         },
         Date: {
@@ -58,13 +58,58 @@ this.initSchema = function() {
         freezeTableName: true
     });
 
+    this.seqConn.define('DudeHobbiesUpdate', {
+        UpdateID: {
+            type : Sequelize.INTEGER,
+            primaryKey : true,
+            autoIncrement : true,
+            allowNull: false
+        },
+        VersionID: {
+            type: Sequelize.INTEGER,
+            references: {
+                model: 'DudeProfileVersion',
+                key: 'VersionID'
+            }
+        },
+        HobbyTitle: Sequelize.STRING
+    },
+    {
+        freezeTableName: true
+    });
+
+    this.seqConn.define('DudeJobUpdate', {
+        UpdateID: {
+            type : Sequelize.INTEGER,
+            primaryKey : true,
+            autoIncrement : true,
+            allowNull: false
+        },
+        VersionID: {
+            type: Sequelize.INTEGER,
+            references: {
+                model: 'DudeProfileVersion',
+                key: 'VersionID'
+            }
+        },
+        JobTitle: Sequelize.STRING,
+        Company: Sequelize.STRING,
+        Location: Sequelize.STRING
+    },
+    {
+        freezeTableName: true
+    });
+
 }
 
-this.addDude = function(fullname, phone, email) {
+this.addDude = function(dude) {
+    if(!dude.fullname){
+        return 0;
+    }
     return this.seqConn.models.Dude.create({
-        Fullname: fullname,
-        Phone: phone,
-        Email: email
+        Fullname: dude.fullname,
+        Phone: dude.phone,
+        Email: dude.email
     });
 }
 
@@ -72,7 +117,7 @@ this.addDude = function(fullname, phone, email) {
 this.addVersion = function(profile) {
     if(!profile.dudeID){
         console.log("[ERROR] ", "Malformed profile object.")
-        return;
+        return 0;
     }
     return profile.date ?   this.seqConn.models.DudeProfileVersion.create({DudeID: profile.dudeID, Date: profile.date}) :
                             this.seqConn.models.DudeProfileVersion.create({DudeID: profile.dudeID});
