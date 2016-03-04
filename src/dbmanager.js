@@ -136,14 +136,15 @@ this.getDudes = function(arrayids, mode) {
 }
 
 this.addDude = function(dude) {
-    if(!dude.fullname){
-        return 0;
-    }
     return this.seqConn.models.Dude.create({
         Fullname: dude.fullname,
         Phone: dude.phone,
         Email: dude.email
     });
+}
+
+this.updateDude = function(dude) {
+    return this.seqConn.models.Dude.update(dude, {where: {DudeID: dude.DudeID}});
 }
 
 this.deleteDude = function(arrayids) {
@@ -170,34 +171,26 @@ this.getVersions = function(id) {
 }
 
 this.addVersion = function(profile) {
-    if(!profile.dudeID){
-        console.log("[ERROR] ", "Malformed profile object.");
-        return 0;
-    }
     return profile.date ?   this.seqConn.models.DudeProfileVersion.create({DudeID: profile.dudeID, Date: profile.date}) :
                             this.seqConn.models.DudeProfileVersion.create({DudeID: profile.dudeID});
 }
 
 this.getHobby = function(dudeid, versionid) {
-    return versionid ?  this.seqConn.models.DudeHobbiesUpdate.findAll({
-                            where: {
-                                DudeID: dudeid,
-                                VersionID: versionid
-                            }
-                        }) :
-                        this.seqConn.models.DudeHobbiesUpdate.findAll({
-                            where: {
-                                DudeID: dudeid
-                            }
-                        });
+    return  versionid ?  
+            this.seqConn.models.DudeHobbiesUpdate.findAll({
+                where: {
+                    DudeID: dudeid,
+                    VersionID: versionid
+                }
+            }) :
+            this.seqConn.models.DudeHobbiesUpdate.findAll({
+                where: {
+                    DudeID: dudeid
+                }
+            });
 }
 
 this.addHobby = function(hobby) {
-    if(!(hobby.versionID && hobby.dudeID)){
-        console.log("[ERROR] ", "Malformed hobby object.");
-        return 0;
-    }
-
     return this.seqConn.models.DudeHobbiesUpdate.create({
         VersionID: hobby.versionID, 
         DudeID: hobby.dudeID,
@@ -220,11 +213,6 @@ this.getJob = function(dudeid, versionid) {
 }
 
 this.addJob = function(job) {
-    if(!(job.versionID && job.dudeID)){
-        console.log("[ERROR] ", "Malformed job object.");
-        return 0;
-    }
-
     return this.seqConn.models.DudeJobsUpdate.create({
         VersionID: job.versionID, 
         DudeID: job.dudeID,

@@ -54,14 +54,31 @@ this.defineInterface = function() {
             });
     });
 
+    this.restapi.patch('/rest/dudes/:id', (req, res) => {
+        var update = {};
+        update.DudeID = req.params.id;
+        if(req.body.fullname) update.Fullname = req.body.fullname;
+        if(req.body.phone) update.Phone = req.body.phone;
+        if(req.body.email) update.Email = req.body.email;
+
+        this.DBmanager.updateDude(update)
+            .then(() => {
+                res.send({updated:true});
+            })
+            .catch((error) => {
+                console.log(error); // logger here
+                res.send({error:true});
+            });
+    });
+
     this.restapi.post('/rest/dudes', (req, res) => {
         this.DBmanager.addDude({
-            fullname: req.body.fullname,
-            phone: req.body.phone,
-            email: req.body.email
+            fullname: req.body.fullname ? req.body.fullname : '',
+            phone: req.body.phone ? req.body.phone : '',
+            email: req.body.email ? req.body.email : '',
         })
-            .then((success) => {
-                console.log(success);
+            .then(() => {
+                console.log({created:true});
             })
             .catch((error) => {
                 console.log(error); // logger here
@@ -72,7 +89,7 @@ this.defineInterface = function() {
     this.restapi.delete('/rest/dudes/:id', (req, res) => {
         this.DBmanager.deleteDude([req.params.id])
             .then(() => {
-                res.send({success:true});
+                res.send({deleted:true});
             })
             .catch((error) => {
                 console.log(error); // logger here
@@ -131,9 +148,15 @@ this.defineInterface = function() {
     });
 
     this.restapi.post('/rest/dudes/:id/versions/:versionid/hobbies', (req, res) => {
-        this.DBmanager.addHobby({versionID: req.params.versionid, dudeID: req.params.id, hobbyTitle: req.body.hobbyTitle})
+        var newHobby = {};
+        newHobby.versionID = req.params.versionid;
+        newHobby.dudeID = req.params.id;
+        if(req.body.hobbyTitle) newHobby.hobbyTitle = req.body.hobbyTitle;
+
+        this.DBmanager.addHobby(newHobby)
             .then((success) => {
                 console.log(success);
+                res.send({success:true});
             })
             .catch((error) => {
                 console.log(error); // logger here
@@ -167,9 +190,17 @@ this.defineInterface = function() {
     });
 
     this.restapi.post('/rest/dudes/:id/versions/:versionid/jobs', (req, res) => {
-        this.DBmanager.addJob({versionID: req.params.versionid, dudeID: req.params.id, jobTitle: req.body.jobTitle, company: req.body.company, location: req.body.location})
+        var newJob = {};
+        newJob.versionID = req.params.versionid;
+        newJob.dudeID = req.params.id;
+        if(req.body.jobTitle) newJob.jobTitle = req.body.jobTitle;
+        if(req.body.company) newJob.company = req.body.company;
+        if(req.body.location) newJob.location = req.body.location;
+
+        this.DBmanager.addJob(newJob)
             .then((success) => {
                 console.log(success);
+                res.send({success: true});
             })
             .catch((error) => {
                 console.log(error); // logger here
