@@ -1,7 +1,13 @@
 #REST api
 
+##How to install
+````
+npm install
+````
 ##How to use
-
+````
+node src/init 
+````
 Create a job under version 2 of his profile, dude with id 1
 ```javascript
 $.ajax({

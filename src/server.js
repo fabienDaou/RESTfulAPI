@@ -25,7 +25,7 @@ this.start = function(dbmanager) {
 
 this.defineInterface = function() {
 
-    this.restapi.get("/rest/", function(req, res) {
+    this.restapi.get("/rest/", (req, res) => {
         res.sendFile(__dirname + '/static/test.html');
     });
 
@@ -34,15 +34,23 @@ this.defineInterface = function() {
     ///
     this.restapi.get('/rest/dudes', (req, res) => {
         this.DBmanager.getDudes([], {mode:'ALL'})
-            .then(function(dudes) {
+            .then((dudes) => {
                 res.send(JSON.stringify(dudes));
+            })
+            .catch((error) => {
+                console.log(error); // logger here
+                res.send({error: true});
             });
     });
 
     this.restapi.get('/rest/dudes/:id', (req, res) => {
         this.DBmanager.getDudes([req.params.id])
-            .then(function(dude) {
+            .then((dude) => {
                 res.send(JSON.stringify(dude));
+            })
+            .catch((error) => {
+                console.log(error); // logger here
+                res.send({error: true});
             });
     });
 
@@ -52,15 +60,23 @@ this.defineInterface = function() {
             phone: req.body.phone,
             email: req.body.email
         })
-            .then(function(success) {
+            .then((success) => {
                 console.log(success);
+            })
+            .catch((error) => {
+                console.log(error); // logger here
+                res.send({error: true});
             });
     });
 
     this.restapi.delete('/rest/dudes/:id', (req, res) => {
         this.DBmanager.deleteDude([req.params.id])
-            .then(function() {
+            .then(() => {
                 res.send({success:true});
+            })
+            .catch((error) => {
+                console.log(error); // logger here
+                res.send({error: true});
             });
     });
 
@@ -71,6 +87,10 @@ this.defineInterface = function() {
         this.DBmanager.getVersions(req.params.id)
             .then((versions) => {
                 res.send(JSON.stringify(versions));
+            })
+            .catch((error) => {
+                console.log(error); // logger here
+                res.send({error: true});
             });
     });
 
@@ -78,6 +98,10 @@ this.defineInterface = function() {
         this.DBmanager.addVersion({dudeID: req.params.id})
             .then((success) => {
                 console.log(success);
+            })
+            .catch((error) => {
+                console.log(error); // logger here
+                res.send({error: true});
             });
     });
 
@@ -88,6 +112,10 @@ this.defineInterface = function() {
         this.DBmanager.getHobby(req.params.id)
             .then((hobbies) => {
                 res.send(JSON.stringify(hobbies));
+            })
+            .catch((error) => {
+                console.log(error); // logger here
+                res.send({error: true});
             });
     });
 
@@ -95,6 +123,10 @@ this.defineInterface = function() {
         this.DBmanager.getHobby(req.params.id, req.params.versionid)
             .then((hobbies) => {
                 res.send(JSON.stringify(hobbies));
+            })
+            .catch((error) => {
+                console.log(error); // logger here
+                res.send({error: true});
             });
     });
 
@@ -102,6 +134,10 @@ this.defineInterface = function() {
         this.DBmanager.addHobby({versionID: req.params.versionid, dudeID: req.params.id, hobbyTitle: req.body.hobbyTitle})
             .then((success) => {
                 console.log(success);
+            })
+            .catch((error) => {
+                console.log(error); // logger here
+                res.send({error: true});
             });
     });
 
@@ -112,6 +148,10 @@ this.defineInterface = function() {
         this.DBmanager.getJob(req.params.id)
             .then((jobs) => {
                 res.send(JSON.stringify(jobs));
+            })
+            .catch((error) => {
+                console.log(error); // logger here
+                res.send({error: true});
             });
     });
 
@@ -119,6 +159,10 @@ this.defineInterface = function() {
         this.DBmanager.getJob(req.params.id, req.params.versionid)
             .then((jobs) => {
                 res.send(JSON.stringify(jobs));
+            })
+            .catch((error) => {
+                console.log(error); // logger here
+                res.send({error: true});
             });
     });
 
@@ -126,6 +170,10 @@ this.defineInterface = function() {
         this.DBmanager.addJob({versionID: req.params.versionid, dudeID: req.params.id, jobTitle: req.body.jobTitle, company: req.body.company, location: req.body.location})
             .then((success) => {
                 console.log(success);
+            })
+            .catch((error) => {
+                console.log(error); // logger here
+                res.send({error: true});
             });
     });
 }
