@@ -21,6 +21,22 @@ $.ajax({
     console.log(error);
 });
 ```
+##Definition HATEOAS
+* The model of application is an engine that moves from one state to another by picking alternative state transitions in current set of representations.
+##Why HATEOAS is useful?
+* Self documented API.
+* No worries about access permissions client-side: work is done server-side.
+* It is not up to the user to know what to do next in a "business process", links are there to guide the user.
+* No out-of-band documentation, I still think an out of band is useful for developers to have an overview of the system.
+* API can change (links especially) without breaking every client-side application.
+
+##When to use HATEOAS?
+* When a company wants to invest into a long term solution that needs to be robust to changes.
+* When you want loose coupling between client & server, allowing each to evolve independently.
+* When you want to avoid maintenance of client apps.
+* When you do not want to be yelled at by Roy Fielding.
+
+Basically if you want that any changes in the API does not change anything for the client.
 
 ##Interface
 ###Dudes
