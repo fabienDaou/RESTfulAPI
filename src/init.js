@@ -25,3 +25,10 @@ DBmanager.seqConn.sync()
     });
 
 
+var hal = require('hal');
+ 
+var resource = new hal.Resource({name: "Harry"}, '/harry');
+resource.link('hello', '/harry/hello');
+console.log(resource.toJSON());
+
+
