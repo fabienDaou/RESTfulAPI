@@ -21,8 +21,9 @@ $.ajax({
     console.log(error);
 });
 ```
-##Definition HATEOAS
+##Definition of HATEOAS
 * The model of application is an engine that moves from one state to another by picking alternative state transitions in current set of representations.
+
 ##Why HATEOAS is useful?
 * Self documented API.
 * No worries about access permissions client-side: work is done server-side.
