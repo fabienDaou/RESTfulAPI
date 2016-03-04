@@ -1,7 +1,23 @@
 #REST api
 
-##Interface
+##How to use
 
+Create a job under version 2 of his profile, dude with id 1
+```javascript
+$.ajax({
+    type: 'POST',
+    url: "http://localhost:5000/rest/dudes/1/versions/2/jobs",
+    data: JSON.stringify({jobTitle:"snoozer"}),
+    contentType: 'application/json; charset=utf-8'
+}).then(function(res) {
+    console.log("Successfully added!");
+}).fail(function(error){
+    console.log(error);
+});
+```
+
+##Interface
+###Dudes
 **_Get_ all dudes**
 ```javascript
 GET /dudes
@@ -22,18 +38,16 @@ PATCH /dudes/:dudeid
 ```javascript
 DELETE /dudes/:dudeid
 ```
+###Versions
 **_Get_ all versions linked to a dude**
 ```javascript
 GET /dudes/:dudeid/versions
-```
-**_Get_ a specific version linked to a dude**
-```javascript
-GET /dudes/:dudeid/versions/:versionid
 ```
 **_Create_ a new version linked to a dude**
 ```javascript
 POST /dudes/:dudeid/versions/
 ```
+###Hobbies
 **_Get_ all hobbies linked to a dude**
 ```javascript
 GET /dudes/:dudeid/hobbies
@@ -46,6 +60,7 @@ GET /dudes/:dudeid/versions/:versionid/hobbies
 ```javascript
 POST /dudes/:dudeid/versions/:versionid/hobbies
 ```
+###Jobs
 **_Get_ all jobs linked to a dude**
 ```javascript
 GET /dudes/:dudeid/jobs

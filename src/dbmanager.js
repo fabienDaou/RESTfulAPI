@@ -73,13 +73,20 @@ this.initSchema = function() {
                 key: 'VersionID'
             }
         },
+        DudeID: {
+            type: Sequelize.INTEGER,
+            references: {
+                model: 'Dude',
+                key: 'DudeID'
+            }
+        },
         HobbyTitle: Sequelize.STRING
     },
     {
         freezeTableName: true
     });
 
-    this.seqConn.define('DudeJobUpdate', {
+    this.seqConn.define('DudeJobsUpdate', {
         UpdateID: {
             type : Sequelize.INTEGER,
             primaryKey : true,
@@ -91,6 +98,13 @@ this.initSchema = function() {
             references: {
                 model: 'DudeProfileVersion',
                 key: 'VersionID'
+            }
+        },
+        DudeID: {
+            type: Sequelize.INTEGER,
+            references: {
+                model: 'Dude',
+                key: 'DudeID'
             }
         },
         JobTitle: Sequelize.STRING,
@@ -146,48 +160,76 @@ this.deleteDude = function(arrayids) {
     return Promise.all(promises);
 }
 
+this.getVersions = function(id) {
+    return this.seqConn.models.DudeProfileVersion.findAll({
+        where: {
+            DudeID: id
+        },
+        attributes: ['VersionID', 'DudeID', 'Date']
+    });
+}
 
 this.addVersion = function(profile) {
     if(!profile.dudeID){
-        console.log("[ERROR] ", "Malformed profile object.")
+        console.log("[ERROR] ", "Malformed profile object.");
         return 0;
     }
     return profile.date ?   this.seqConn.models.DudeProfileVersion.create({DudeID: profile.dudeID, Date: profile.date}) :
                             this.seqConn.models.DudeProfileVersion.create({DudeID: profile.dudeID});
 }
 
+this.getHobby = function(dudeid, versionid) {
+    return versionid ?  this.seqConn.models.DudeHobbiesUpdate.findAll({
+                            where: {
+                                DudeID: dudeid,
+                                VersionID: versionid
+                            }
+                        }) :
+                        this.seqConn.models.DudeHobbiesUpdate.findAll({
+                            where: {
+                                DudeID: dudeid
+                            }
+                        });
+}
 
-this.startDoingStuff = function() {
-    var that = this;
-    var result = this.seqConn.models.Dude.findAll({
-        attributes : ['DudeID', 'Fullname', 'Phone', 'Email']
+this.addHobby = function(hobby) {
+    if(!(hobby.versionID && hobby.dudeID)){
+        console.log("[ERROR] ", "Malformed hobby object.");
+        return 0;
+    }
+
+    return this.seqConn.models.DudeHobbiesUpdate.create({
+        VersionID: hobby.versionID, 
+        DudeID: hobby.dudeID,
+        HobbyTitle: hobby.hobbyTitle
     });
+}
 
-    result
-    .then(function(data){
-        var current = null;
-        for(var i = 0; i < data.length; i++){
-            current = data[i].dataValues;
-            console.log(current.DudeID + '/' + current.Fullname + '/' + current.Phone + '/' + current.Email);
-        }
+this.getJob = function(dudeid, versionid) {
+    return versionid ?  this.seqConn.models.DudeJobsUpdate.findAll({
+                            where: {
+                                DudeID: dudeid,
+                                VersionID: versionid
+                            }
+                        }) :
+                        this.seqConn.models.DudeJobsUpdate.findAll({
+                            where: {
+                                DudeID: dudeid
+                            }
+                        });
+}
 
-        console.log(current);
+this.addJob = function(job) {
+    if(!(job.versionID && job.dudeID)){
+        console.log("[ERROR] ", "Malformed job object.");
+        return 0;
+    }
 
-        var result2 = that.addVersion({dudeID: current.DudeID});
-        result2.then(function() {
-            that.seqConn.models.DudeProfileVersion.findAll({
-                attributes : ['VersionID', 'DudeID', 'Date']
-            }).then(function(data) {
-                var current = null;
-                for(var i = 0; i < data.length; i++){
-                    current = data[i].dataValues;
-                    console.log(current.VersionID + '/' + current.DudeID + '/' + current.Date);
-                }
-            });
-        });
-    })
-    .catch(function(error){
-        console.log("Query error \n" + error);
-    })
-    .done();
+    return this.seqConn.models.DudeJobsUpdate.create({
+        VersionID: job.versionID, 
+        DudeID: job.dudeID,
+        JobTitle: job.jobTitle ? job.jobTitle : '',
+        Company: job.company ? job.company : '',
+        Location: job.location ? job.location : ''
+    });
 }
