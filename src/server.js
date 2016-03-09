@@ -1,12 +1,14 @@
 var Express = require('express'),
     BodyParser = require('body-parser');
 
-this.restapi = Express();
-this.restapi.use(BodyParser.json());
-this.restapi.use(BodyParser.urlencoded({
+var Server = function() {};
+
+Server.prototype.restapi = Express();
+Server.prototype.restapi.use(BodyParser.json());
+Server.prototype.restapi.use(BodyParser.urlencoded({
     extended: true
 }));
-this.restapi.use('/rest', Express.static(__dirname + '/static'));
+Server.prototype.restapi.use('/rest', Express.static(__dirname + '/static'));
 
 // in case of CORS
 /*this.restapi.use(function(req, res, next) {
@@ -15,7 +17,9 @@ this.restapi.use('/rest', Express.static(__dirname + '/static'));
   next();
 });*/
 
-this.start = function(dbmanager) {
+Server.prototype.DBmanager = {};
+
+Server.prototype.start = function(dbmanager) {
     this.DBmanager = dbmanager;
 
     this.defineInterface();
@@ -23,7 +27,7 @@ this.start = function(dbmanager) {
     console.log('Listening on port 5000');
 }
 
-this.defineInterface = function() {
+Server.prototype.defineInterface = function() {
 
     this.restapi.get("/rest/", (req, res) => {
         res.sendFile(__dirname + '/static/test.html');
@@ -211,4 +215,4 @@ this.defineInterface = function() {
     });
 }
 
-
+module.exports = new Server();

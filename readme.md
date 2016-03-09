@@ -18,7 +18,7 @@ $.ajax({
     data: JSON.stringify({jobTitle:"snoozer"}),
     contentType: 'application/json; charset=utf-8'
 }).then(function(res) {
-    console.log("Successfully added!");
+    console.log(res);
 }).fail(function(error){
     console.log(error);
 });

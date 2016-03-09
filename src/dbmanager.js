@@ -3,24 +3,26 @@ var Sequelize = require('sequelize'),
     Promise = require('promise');
 
 
-this.seqConn = null;
+var DBManager = function(){};
+
+DBManager.prototype.seqConn = null;
 
 
 
-this.createVolatileDB = function() {
+DBManager.prototype.createVolatileDB = function() {
     return new Sqlite.Database(":memory:", {}, (err) => {
         console.log(err);
     });
 }
 
-this.connect = function() {
+DBManager.prototype.connect = function() {
     this.seqConn = new Sequelize('raptor', '', '', {
         dialect: 'sqlite',
         storate: ':memory:'
     });
 }
 
-this.initSchema = function() {
+DBManager.prototype.initSchema = function() {
     this.seqConn.define('Dude', {
         DudeID : {
             type : Sequelize.INTEGER,
@@ -120,7 +122,7 @@ this.initSchema = function() {
 // Retrieve dude, dudes, all dudes
 // optional mode = {mode:'ALL'}
 // return a promise
-this.getDudes = function(arrayids, mode) {
+DBManager.prototype.getDudes = function(arrayids, mode) {
     if(mode && mode.mode === 'ALL'){
         return this.seqConn.models.Dude.findAll({
             attributes: ['DudeID', 'Fullname', 'Phone', 'Email']
@@ -135,7 +137,7 @@ this.getDudes = function(arrayids, mode) {
     });
 }
 
-this.addDude = function(dude) {
+DBManager.prototype.addDude = function(dude) {
     return this.seqConn.models.Dude.create({
         Fullname: dude.fullname,
         Phone: dude.phone,
@@ -143,11 +145,11 @@ this.addDude = function(dude) {
     });
 }
 
-this.updateDude = function(dude) {
+DBManager.prototype.updateDude = function(dude) {
     return this.seqConn.models.Dude.update(dude, {where: {DudeID: dude.DudeID}});
 }
 
-this.deleteDude = function(arrayids) {
+DBManager.prototype.deleteDude = function(arrayids) {
     var promises = [];
     for (var i = arrayids.length - 1; i >= 0; i--) {
         var promise = this.seqConn.models.Dude
@@ -161,7 +163,7 @@ this.deleteDude = function(arrayids) {
     return Promise.all(promises);
 }
 
-this.getVersions = function(id) {
+DBManager.prototype.getVersions = function(id) {
     return this.seqConn.models.DudeProfileVersion.findAll({
         where: {
             DudeID: id
@@ -170,12 +172,12 @@ this.getVersions = function(id) {
     });
 }
 
-this.addVersion = function(profile) {
+DBManager.prototype.addVersion = function(profile) {
     return profile.date ?   this.seqConn.models.DudeProfileVersion.create({DudeID: profile.dudeID, Date: profile.date}) :
                             this.seqConn.models.DudeProfileVersion.create({DudeID: profile.dudeID});
 }
 
-this.getHobby = function(dudeid, versionid) {
+DBManager.prototype.getHobby = function(dudeid, versionid) {
     return  versionid ?  
             this.seqConn.models.DudeHobbiesUpdate.findAll({
                 where: {
@@ -190,7 +192,7 @@ this.getHobby = function(dudeid, versionid) {
             });
 }
 
-this.addHobby = function(hobby) {
+DBManager.prototype.addHobby = function(hobby) {
     return this.seqConn.models.DudeHobbiesUpdate.create({
         VersionID: hobby.versionID, 
         DudeID: hobby.dudeID,
@@ -198,7 +200,7 @@ this.addHobby = function(hobby) {
     });
 }
 
-this.getJob = function(dudeid, versionid) {
+DBManager.prototype.getJob = function(dudeid, versionid) {
     return versionid ?  this.seqConn.models.DudeJobsUpdate.findAll({
                             where: {
                                 DudeID: dudeid,
@@ -212,7 +214,7 @@ this.getJob = function(dudeid, versionid) {
                         });
 }
 
-this.addJob = function(job) {
+DBManager.prototype.addJob = function(job) {
     return this.seqConn.models.DudeJobsUpdate.create({
         VersionID: job.versionID, 
         DudeID: job.dudeID,
@@ -221,3 +223,5 @@ this.addJob = function(job) {
         Location: job.location ? job.location : ''
     });
 }
+
+module.exports = new DBManager();
